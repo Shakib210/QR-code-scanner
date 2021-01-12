@@ -1,17 +1,37 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React, { useRef } from "react";
+import { render } from "react-dom";
+import { useReactToPrint } from "react-to-print";
+import { QRCode } from "react-qr-svg";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+class ComponentToPrint extends React.Component {
+  render() {
+    return (
+      <div style={{display:'flex', justifyContent:'center'}}>
+        <QRCode
+                bgColor="#FFFFFF"
+                fgColor="#000000"
+                level="Q"
+                style={{ width: 256 }}
+                value="{qr}"
+            /> 
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+      </div>
+    );
+  }
+}
+
+const Example = () => {
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+  return (
+    <div>
+      <ComponentToPrint ref={componentRef} />
+      <button onClick={handlePrint}>Print this out!</button>
+    </div>
+  );
+};
+
+render(<Example />, document.querySelector("#root"));
